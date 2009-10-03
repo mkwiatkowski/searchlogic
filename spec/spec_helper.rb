@@ -56,6 +56,16 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer :order_id
     t.float :price
   end
+
+  create_table :industries do |t|
+    t.datetime :created_at
+    t.datetime :updated_at
+  end
+
+  create_table :companies_industries, :id => false do |t|
+    t.integer :company_id
+    t.integer :industry_id
+  end
 end
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -66,6 +76,7 @@ Spec::Runner.configure do |config|
   config.before(:each) do
     class Company < ActiveRecord::Base
       has_many :users, :dependent => :destroy
+      has_and_belongs_to_many :industries
     end
     
     class User < ActiveRecord::Base
@@ -87,6 +98,10 @@ Spec::Runner.configure do |config|
       belongs_to :order
     end
     
+    class Industry < ActiveRecord::Base
+      has_and_belongs_to_many :companies
+    end
+
     Company.destroy_all
     User.destroy_all
     Order.destroy_all

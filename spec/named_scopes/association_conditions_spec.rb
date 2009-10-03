@@ -91,6 +91,15 @@ describe "Association Conditions" do
     Company.users_orders_total_gt(10).users_orders_taxes_lt(5).ascend_by_users_orders_total.all.should == Company.all
   end
   
+  it "should not return multiple records for habtm association" do
+    company = Company.create
+    industry1 = Industry.create
+    industry2 = Industry.create
+    company.industries = [industry1, industry2]
+
+    Company.search(:industries_id_equals_any => [industry1.id, industry2.id]).all.should == [company]
+  end
+
   it "should not create the same join twice when traveling through the duplicate join" do
     Company.users_username_like("bjohnson").users_orders_total_gt(100).all.should == Company.all
   end
